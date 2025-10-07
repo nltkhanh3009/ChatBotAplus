@@ -1,0 +1,16 @@
+# Thư mục build
+[Bb]in/
+[Oo]bj/
+
+# Packages NuGet
+*.nupkg
+
+# IDE files (Visual Studio)
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Bot Framework specific files
+*.bot

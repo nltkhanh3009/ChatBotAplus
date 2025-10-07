@@ -1,0 +1,87 @@
+﻿@{
+    ViewData["Title"] = "Chatbot PDF";
+}
+
+<div class="chat-container">
+    <div class="chat-header">
+        <h2>🤖 Chatbot Doanh Nghiệp</h2>
+        <p class="sub">Tìm kiếm thông tin trong tài liệu PDF</p>
+
+        <button id="themeToggle" class="theme-toggle">🌙 Dark</button>
+    </div>
+
+    <div id="chatBox" class="chat-box"></div>
+
+    <div id="typingIndicator" class="typing-indicator" style="display:none;">
+        <span></span><span></span><span></span>
+    </div>
+
+    <div class="chat-input-area">
+        <input type="text" id="questionInput" placeholder="Nhập câu hỏi của bạn..." />
+        <button id="askBtn">Gửi</button>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" asp-action="UploadPdf" class="upload-form">
+        <input type="file" name="file" />
+        <button type="submit">📂 Upload PDF</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const chatBox = document.getElementById("chatBox");
+        const typing = document.getElementById("typingIndicator");
+        const input = document.getElementById("questionInput");
+        const askBtn = document.getElementById("askBtn");
+
+        // Hàm thêm message
+        function appendMessage(text, type) {
+            const div = document.createElement("div");
+            div.classList.add("msg", type === "user" ? "user-msg" : "bot-msg");
+            div.textContent = text; // an toàn hơn innerHTML
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Gửi câu hỏi
+        async function sendMessage() {
+            const question = input.value.trim();
+            if (!question) return;
+
+            appendMessage(question, "user");
+            input.value = "";
+
+            typing.style.display = "flex";
+
+            try {
+                const response = await fetch('/Chat/Ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'question=' + encodeURIComponent(question)
+                });
+
+                const data = await response.json();
+                appendMessage(data.answer, "bot");
+            } catch (err) {
+                appendMessage("⚠️ Lỗi kết nối server.", "bot");
+            }
+
+            typing.style.display = "none";
+        }
+
+        askBtn.addEventListener("click", sendMessage);
+
+        // Bấm Enter để gửi
+        input.addEventListener("keyup", function (e) {
+            if (e.key === "Enter") {
+                sendMessage();
+            }
+        });
+
+        // Dark/Light mode toggle
+        document.getElementById("themeToggle").addEventListener("click", function () {
+            document.body.classList.toggle("dark");
+            this.textContent = document.body.classList.contains("dark") ? "☀️ Light" : "🌙 Dark";
+        });
+    </script>
+}

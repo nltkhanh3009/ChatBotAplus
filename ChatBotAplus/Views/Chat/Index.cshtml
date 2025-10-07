@@ -1,0 +1,70 @@
+﻿@{
+    ViewData["Title"] = "Chatbot Doanh nghiệp";
+}
+
+<link rel="stylesheet" href="~/css/chat.css" />
+
+<div class="chat-container">
+    <h2>🤖 Chatbot Doanh Nghiệp</h2>
+    <div id="chatBox" class="chat-box"></div>
+
+    <div class="chat-input-area">
+        <input type="text" id="questionInput" placeholder="Nhập câu hỏi..." />
+        <button id="askBtn">Gửi</button>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const askBtn = document.getElementById("askBtn");
+        const questionInput = document.getElementById("questionInput");
+        const chatBox = document.getElementById("chatBox");
+
+        // Hàm chính để xử lý việc gửi tin nhắn
+        async function sendMessage() {
+            const q = questionInput.value;
+            if (!q.trim()) return;
+
+            // 1. Hiển thị tin nhắn người dùng
+            chatBox.innerHTML += `<div class='user-msg user-new'>${q}</div>`;
+
+            // 2. Clear input và tập trung lại
+            questionInput.value = '';
+            questionInput.focus();
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // 3. Gọi API
+            try {
+                const res = await fetch('/Chat/Ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'question=' + encodeURIComponent(q)
+                });
+
+                const data = await res.json();
+
+                // 4. Hiển thị tin nhắn Bot
+                chatBox.innerHTML += `<div class='bot-msg bot-new'>${data.answer}</div>`;
+            } catch (error) {
+                // Xử lý lỗi kết nối
+                chatBox.innerHTML += `<div class='bot-msg bot-new error-msg'>[LỖI KẾT NỐI] Không thể gửi yêu cầu đến server.</div>`;
+            }
+
+            // Cuộn xuống cuối
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Gửi bằng nút Gửi
+        askBtn.addEventListener("click", sendMessage);
+
+        // Gửi bằng phím Enter
+        questionInput.addEventListener("keyup", (event) => {
+            // Kiểm tra mã phím là 13 (Enter)
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+    </script>
+}
