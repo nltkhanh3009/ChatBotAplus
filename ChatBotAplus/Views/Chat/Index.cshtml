@@ -46,7 +46,11 @@
                 const data = await res.json();
 
                 // 4. Hiển thị tin nhắn Bot
-                chatBox.innerHTML += `<div class='bot-msg bot-new'>${data.answer}</div>`;
+                        // Sử dụng HTML thay vì text thô
+        chatBox.innerHTML += `<div class='bot-msg'>${data.answer}</div>`;
+        // **Lưu ý:** JavaScript tự động hiển thị HTML khi gán vào innerHTML,
+        // nhưng nếu bạn dùng Razor Pages (cshtml), hãy đảm bảo Controller trả về HTML an toàn.
+        // (Trong trường hợp này, mã JavaScript đã đúng vì bạn đang gán HTML trực tiếp.)
             } catch (error) {
                 // Xử lý lỗi kết nối
                 chatBox.innerHTML += `<div class='bot-msg bot-new error-msg'>[LỖI KẾT NỐI] Không thể gửi yêu cầu đến server.</div>`;
