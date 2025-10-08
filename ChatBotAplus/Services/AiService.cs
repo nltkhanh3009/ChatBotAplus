@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChatBotAplus.Services
 {
-    public class AiService
+    public class AiService:IAiService
     {
         // Khuyến nghị: Đọc API Key từ IConfiguration thay vì hardcode
         private readonly string apiKey = "AIzaSyCD-TYHhaO0KPjNdsiTKySIjBG5HxeM3uQ";
@@ -16,9 +16,14 @@ namespace ChatBotAplus.Services
             request.AddHeader("Content-Type", "application/json");
 
             // Cải tiến prompt với HƯỚNG DẪN HỆ THỐNG rõ ràng
-            var systemInstruction = "Bạn là trợ lý AI chuyên nghiệp, thân thiện cho Aplus. Hãy trả lời câu hỏi của người dùng DỰA DUY NHẤT VÀO TÀI LIỆU được cung cấp,chỉ đưa ra thông tin Tên sản phẩm, giá bán và link dẫn dến sản phẩm,- nếu người dùng cần thì trả lời thêm vấn đề đó, nhưng đừng nhắc gì đến tài liệu." +
-                " Nếu tài liệu không chứa câu trả lời, hãy trả lời lịch sự rằng bạn không có đủ thông tin.";
+            var systemInstruction = "Bạn là trợ lý AI chuyên nghiệp, thân thiện cho Aplus. Hãy trả lời câu hỏi của người dùng DỰA DUY NHẤT VÀO TÀI LIỆU được cung cấp." +
+    " Cấu trúc câu trả lời bằng Markdown, sử dụng dấu gạch đầu dòng và **in đậm** cho các tiêu đề." +
+    " QUAN TRỌNG: Nếu câu hỏi là về HƯỚNG DẪN SỬ DỤNG hoặc CÔNG DỤNG, hãy trích xuất thông tin đó MỘT CÁCH TRỰC TIẾP và chi tiết. " +
+    " Nếu câu hỏi là về sản phẩm, hãy tạo một Markdown Link cho mỗi sản phẩm theo định dạng: **[Tên Sản Phẩm](Link SP)** : công dụng của sản phẩm." +
+    " Tuyệt đối KHÔNG nhắc gì đến 'tài liệu' hay 'context'. Nếu tài liệu không chứa câu trả lời, hãy trả lời lịch sự rằng bạn không có đủ thông tin.";
+
             var fullPrompt = $"{systemInstruction}\n\n[TÀI LIỆU]: {context}\n\n[CÂU HỎI]: {question}";
+
 
             var body = new
             {
