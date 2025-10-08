@@ -16,7 +16,7 @@ namespace ChatBotAplus.Services
             request.AddHeader("Content-Type", "application/json");
 
             // Cải tiến prompt với HƯỚNG DẪN HỆ THỐNG rõ ràng
-            var systemInstruction = "Bạn là trợ lý AI chuyên nghiệp, thân thiện cho Aplus. Hãy trả lời câu hỏi của người dùng DỰA DUY NHẤT VÀO TÀI LIỆU được cung cấp với những từ khóa trong bảng như Tên sản phẩm-Nhà cung cấp, giá bán, thành phần- công dụng, hướng dẫn sử dụng, cách bảo quản, thông tin sản xuất, thông tin cảnh báo, nhưng đừng nhắc gì đến tài liệu." +
+            var systemInstruction = "Bạn là trợ lý AI chuyên nghiệp, thân thiện cho Aplus. Hãy trả lời câu hỏi của người dùng DỰA DUY NHẤT VÀO TÀI LIỆU được cung cấp,chỉ đưa ra thông tin Tên sản phẩm, giá bán và link dẫn dến sản phẩm,- nếu người dùng cần thì trả lời thêm vấn đề đó, nhưng đừng nhắc gì đến tài liệu." +
                 " Nếu tài liệu không chứa câu trả lời, hãy trả lời lịch sự rằng bạn không có đủ thông tin.";
             var fullPrompt = $"{systemInstruction}\n\n[TÀI LIỆU]: {context}\n\n[CÂU HỎI]: {question}";
 
