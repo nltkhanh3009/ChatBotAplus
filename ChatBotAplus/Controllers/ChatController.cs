@@ -30,7 +30,7 @@ namespace ChatBotAplus.Controllers
             var userQuestionLower = question.Trim().ToLower();
             if (userQuestionLower == "hi" || userQuestionLower == "chào" || userQuestionLower == "hello")
             {
-                return Json(new { answer = "Bạn cần mình tư vấn gì về vấn đề của Aplus?" });
+                return Json(new { answer = "Anh/Chị cần em tư vấn gì về vấn đề của Aplus ạ?" });
             }
 
             try

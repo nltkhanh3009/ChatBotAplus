@@ -4,59 +4,112 @@
 
 <link rel="stylesheet" href="~/css/chat.css" />
 
-<div class="chat-container">
-    <h2>🤖 Chatbot Doanh Nghiệp</h2>
-    <div id="chatBox" class="chat-box"></div>
+<div id="chatWidget" class="chat-widget-wrapper">
+    <button id="chatOpenBtn" class="chat-toggle-btn">
+		<img src="~/images/anest.png" alt="Chat Icon" width="40" height="40" />
+    </button>
+    <div id="chatContainer" class="chat-container">
 
-    <div class="chat-input-area">
-        <input type="text" id="questionInput" placeholder="Nhập câu hỏi..." />
-        <button id="askBtn">Gửi</button>
+        <div class="chat-header-bar" style="text-align:left">
+            <img src="~/images/anest.png" alt="Chat Icon" width="28" height="28" />ANest Chatbot
+
+        </div>
+
+        <div id="chatBox" class="chat-box"></div>
+
+        <div class="chat-input-area">
+            <input type="text" id="questionInput" placeholder="Nhập tin nhắn..." />
+            <button id="askBtn">Gửi</button>
+        </div>
+
     </div>
+
+    <button id="chatCloseBtn" class="chat-close-btn">
+        <span id="closeIcon">✖</span>
+    </button>
 </div>
 
 @section Scripts {
     <script>
+        const chatWidget = document.getElementById("chatWidget");
+        const chatContainer = document.getElementById("chatContainer");
+        const chatCloseBtn = document.getElementById("chatCloseBtn");
+
+        // Nút Gửi và Input cũ
         const askBtn = document.getElementById("askBtn");
         const questionInput = document.getElementById("questionInput");
         const chatBox = document.getElementById("chatBox");
 
-        // Hàm chính để xử lý việc gửi tin nhắn
+        // --- TẠO VÀ HIỂN THỊ TIN NHẮN BOT ---
+        function displayBotMessage(message) {
+            chatBox.innerHTML += `<div class='bot-msg bot-new'>${message}</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        // === LOGIC ĐÓNG/MỞ ===
+        // Sự kiện Đóng Chatbot
+        chatCloseBtn.addEventListener("click", () => {
+            chatWidget.classList.add('closed');
+            // Thêm logic hiển thị nút mở (toggle icon) ở đây nếu cần
+            // (Hiện tại, nút đóng/mở là một: chatCloseBtn)
+        });// Hàm mở hộp chat
+        function openChat() {
+            chatWidget.classList.remove('closed');
+            chatBox.scrollTop = chatBox.scrollHeight;
+            questionInput.focus();
+        }
+
+        // Hàm đóng hộp chat
+        function closeChat() {
+            chatWidget.classList.add('closed');
+        }
+
+        // Gán sự kiện cho các nút
+        chatOpenBtn.addEventListener("click", openChat);
+        chatCloseBtn.addEventListener("click", closeChat);
+
+        // --- HÀM CHÀO MỪNG KHI MỞ CHAT ---
+        // Trạng thái cờ để đảm bảo chỉ chào mừng một lần
+        let isWelcomed = false;
+
+        function handleChatOpen() {
+            openChat();
+            if (!isWelcomed) {
+                const welcomeMessage = "Xin chào Anh/Chị! Em là trợ lý ảo của ANest. Em rất sẵn lòng hỗ trợ Anh/Chị 😊";
+                displayBotMessage(welcomeMessage);
+                isWelcomed = true;
+            }
+        }
+        // Thay đổi sự kiện nút mở để gọi hàm xử lý mới
+        chatOpenBtn.removeEventListener("click", openChat); // Xóa sự kiện cũ (nếu có)
+        chatOpenBtn.addEventListener("click", handleChatOpen);
+
+        // === LOGIC GỬI TIN NHẮN (Giữ nguyên) ===
         async function sendMessage() {
             const q = questionInput.value;
             if (!q.trim()) return;
-
             // 1. Hiển thị tin nhắn người dùng
             chatBox.innerHTML += `<div class='user-msg user-new'>${q}</div>`;
-
-            // 2. Clear input và tập trung lại
             questionInput.value = '';
             questionInput.focus();
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // 3. Gọi API
+            // 2. Gọi API
             try {
+                // ... (Phần fetch API của bạn) ...
                 const res = await fetch('/Chat/Ask', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: 'question=' + encodeURIComponent(q)
                 });
 
                 const data = await res.json();
 
-                // 4. Hiển thị tin nhắn Bot
-                        // Sử dụng HTML thay vì text thô
-        chatBox.innerHTML += `<div class='bot-msg'>${data.answer}</div>`;
-        // **Lưu ý:** JavaScript tự động hiển thị HTML khi gán vào innerHTML,
-        // nhưng nếu bạn dùng Razor Pages (cshtml), hãy đảm bảo Controller trả về HTML an toàn.
-        // (Trong trường hợp này, mã JavaScript đã đúng vì bạn đang gán HTML trực tiếp.)
+                // 3. Hiển thị tin nhắn Bot
+                chatBox.innerHTML += `<div class='bot-msg bot-new'>${data.answer}</div>`;
             } catch (error) {
-                // Xử lý lỗi kết nối
                 chatBox.innerHTML += `<div class='bot-msg bot-new error-msg'>[LỖI KẾT NỐI] Không thể gửi yêu cầu đến server.</div>`;
             }
 
-            // Cuộn xuống cuối
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
@@ -65,7 +118,6 @@
 
         // Gửi bằng phím Enter
         questionInput.addEventListener("keyup", (event) => {
-            // Kiểm tra mã phím là 13 (Enter)
             if (event.key === "Enter") {
                 sendMessage();
             }
