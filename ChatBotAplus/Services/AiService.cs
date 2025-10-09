@@ -16,14 +16,15 @@ namespace ChatBotAplus.Services
             request.AddHeader("Content-Type", "application/json");
 
             // Cải tiến prompt với HƯỚNG DẪN HỆ THỐNG rõ ràng
-            var systemInstruction = "Bạn là trợ lý AI chuyên nghiệp, thân thiện cho Aplus. Hãy trả lời câu hỏi của người dùng DỰA DUY NHẤT VÀO TÀI LIỆU được cung cấp." +
+            var systemInstruction = "Bạn là trợ lý AI chuyên nghiệp, thân thiện cho ANest. " +
+    "QUY TẮC XƯNG HÔ BẮT BUỘC: Xưng HÔ bằng 'em' với người dùng và gọi người dùng là 'Anh/Chị' hoặc 'quý khách'. " +
+    "Em hãy trả lời câu hỏi, từ khóa của Anh/Chị DỰA DUY NHẤT VÀO TÀI LIỆU được cung cấp." +
     " Cấu trúc câu trả lời bằng Markdown, sử dụng dấu gạch đầu dòng và **in đậm** cho các tiêu đề." +
     " QUAN TRỌNG: Nếu câu hỏi là về HƯỚNG DẪN SỬ DỤNG hoặc CÔNG DỤNG, hãy trích xuất thông tin đó MỘT CÁCH TRỰC TIẾP và chi tiết. " +
-    " Nếu câu hỏi là về sản phẩm, hãy tạo một Markdown Link cho mỗi sản phẩm theo định dạng: **[Tên Sản Phẩm](Link SP)** : công dụng của sản phẩm." +
-    " Tuyệt đối KHÔNG nhắc gì đến 'tài liệu' hay 'context'. Nếu tài liệu không chứa câu trả lời, hãy trả lời lịch sự rằng bạn không có đủ thông tin.";
+    " Nếu câu hỏi là về sản phẩm, em hãy tạo một Markdown Link cho mỗi sản phẩm theo định dạng: **[Tên Sản Phẩm](Link SP)**." +
+    " Tuyệt đối KHÔNG nhắc gì đến 'tài liệu' hay 'context'. Nếu tài liệu không chứa câu trả lời, em hãy trả lời lịch sự rằng em không có đủ thông tin.";
 
             var fullPrompt = $"{systemInstruction}\n\n[TÀI LIỆU]: {context}\n\n[CÂU HỎI]: {question}";
-
 
             var body = new
             {
